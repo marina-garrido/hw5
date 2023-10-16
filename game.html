@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+</head>
+
+<body>
+  <div id="game-container">
+    <h1>Tic Tac Toe</h1>
+    <div id="player-turn">Player X's Turn</div>
+    <div id="gameboard">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+    <div id="result"></div>
+    <button id="reset">Reset Game</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // jQuery objects
+    const $gameboard = $("#gameboard");
+    const $cells = $(".cell");
+    const $reset = $('#reset');
+    const $result = $('#result');
+
+    // Variable declarations
+    let player1 = "X";
+    let player2 = "O";
+    let p_turn = true;
+    let turns = 0;
+
+   // Winning combos
+    let winCombo = [
+      [$cells[0], $cells[1], $cells[2]],
+      [$cells[3], $cells[4], $cells[5]],
+      [$cells[6], $cells[7], $cells[8]],
+      [$cells[0], $cells[3], $cells[6]],
+      [$cells[1], $cells[4], $cells[7]],
+      [$cells[2], $cells[5], $cells[8]],
+      [$cells[0], $cells[4], $cells[8]],
+      [$cells[2], $cells[4], $cells[6]],
+    ];
+
+    // Variable to keep track of occupied cells
+    let cellsOccupied = 0;
+
+    /* checkWin
+    Parameters: player 1 or 2
+    Purpose: Check if the specified player has won the game or if it's a tie
+    Returns: true if either player won
+    */
+    function checkWin(player) {
+        turns++;
+        if (turns < 4) { // At least 4 turns to win
+            return false;
+        }
+        
+        for (const combo of winCombo) { // Check each winning combo
+            let cellsOccupied = combo.reduce((count, cell) => cell.textContent === player ? count + 1 : count, 0);
+            if (cellsOccupied === 3) {
+            playerWins(player);
+            return true;
+            }
+        }
+
+        if (turns === 9) { // Tie if turns are used
+            tie();
+        }
+        return false; // No winner, next turn
+    }
+    
+    /* selectCell
+    Parameters: player 1 or 2, and cell being selected
+    Purpose: be able to select wanted cell
+    Returns: true if cell was selected
+    */
+    function selectCell(player, cell) {
+        if ($(cell).text() !== '') {
+            return false; // Cell is already occupied
+        }
+        
+        $(cell).text(player); // Set the cell's content to the player's symbol
+
+        if (checkWin(player)) { 
+            return true;
+        }
+        
+        p_turn = !p_turn; // Switch players
+        return true;
+    }
+
+    // Event handler for cell clicks
+    $('#player-turn').text("Player X's Turn");
+        $cells.click(function () {
+        target = $cells.index(this);
+        cell = $cells[target];
+
+        if (p_turn) {
+            if (selectCell(player1, cell)) {
+            p_turn = false;
+            $('#player-turn').text("Player O's Turn"); // Update to Player O's Turn
+            }
+        } else {
+            if (selectCell(player2, cell)) {
+            p_turn = true;
+            $('#player-turn').text("Player X's Turn"); // Update to Player X's Turn
+            }
+        }
+        });
+
+    /* playerWins
+   Parameters: players
+   Purpose: Display a message when a player wins, and show the reset button.
+   Returns: message
+   */
+    function playerWins(player) { 
+      $result.text(player + ' Won!');
+      $reset.show();
+      $cells.off('click');
+    }
+
+    /* tie
+   Parameters: nothing
+   Purpose: Display a message when the game results in a tie, and show the reset button.
+   Returns: message
+   */
+    function tie() {
+      $result.text("It's a Tie!");
+      $reset.show();
+      $cells.off('click');
+    }
+
+    // Event handler for the reset button
+    $reset.click(function () {
+      reset();
+    });
+
+
+    /* reset
+   Parameters: nothing
+   Purpose: Reset the game board and variables for a new game.
+   Returns: clear board for new game
+   */
+    function reset() {
+        turns = 0;
+        p_turn = true;
+
+        // Reset the starting player to "X"
+        startingPlayer = "X";
+
+        $reset.hide();
+        $result.text('');
+        $cells.text('');
+        $reset.show();
+
+        $cells.off('click'); // Remove the existing click event handlers
+
+        $cells.click(function () {
+            target = $cells.index(this);
+            cell = $cells[target];
+
+            if (startingPlayer === player1) {
+            if (selectCell(player1, cell)) {
+                startingPlayer = "O"; // Switch the starting player
+            }
+            } else {
+            if (selectCell(player2, cell)) {
+                startingPlayer = "X"; // Switch the starting player
+            }
+            }
+        });
+        }
+  </script>
+</body>
+
+</html>

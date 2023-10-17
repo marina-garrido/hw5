@@ -31,9 +31,9 @@
     let p_turn = true;
     let turns = 0;
 
-    // Create board
-    for (let i = 0; i < boardSize; i++) {
-      for (let j = 0; j < boardSize; j++) {
+    // Create the grid dynamically using JavaScript loops
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
         const cell = $('<div class="cell"></div>');
         $gameboard.append(cell);
         $cells.push(cell);
@@ -76,11 +76,7 @@
       [$cells[2], $cells[4], $cells[6]],
     ];
 
-    /* checkWin
-    Parameters: player 1 or 2
-    Purpose: Check if the specified player has won the game or if it's a tie
-    Returns: true if either player won
-    */
+    // Function to check for a win
     function checkWin(player) {
       if (turns < 5) {
         return false;
@@ -100,22 +96,14 @@
       return false;
     }
 
-    /* playerWins
-   Parameters: players
-   Purpose: Display a message when a player wins, and show the reset button.
-   Returns: message
-   */
+    // Function to handle a win
     function playerWins(player) {
       $result.text(player + ' Won!');
       $reset.show();
       $gameboard.off('click'); // Disable further clicks on cells
     }
 
-    /* tie
-   Parameters: nothing
-   Purpose: Display a message when the game results in a tie, and show the reset button.
-   Returns: message
-   */
+    // Function to handle a tie
     function tie() {
       $result.text("It's a Tie!");
       $reset.show();
@@ -125,41 +113,38 @@
     // Event handler for the reset button
     $reset.on("click", reset);
 
-    /* reset
-   Parameters: nothing
-   Purpose: Reset the game board and variables for a new game.
-   Returns: clear board for new game
-   */
+    // Function to reset the game
     function reset() {
-        turns = 0;
-        p_turn = true;
-        $result.text('');
-        $cells.forEach(cell => cell.text('')); // Clear the text of each cell
-        $('#player-turn').text("Player X's Turn"); // Reset the player's turn text
-        // Event handlers
-        $gameboard.on("click", ".cell", function () {
-            const cell = $(this);
-            if (cell.text() === '') {
-            if (p_turn) {
-                cell.text(player1);
-                p_turn = false;
-                $('#player-turn').text("Player O's Turn");
-            } else {
-                cell.text(player2);
-                p_turn = true;
-                $('#player-turn').text("Player X's Turn");
-            }
-            turns++;
-            if (checkWin(player1) || checkWin(player2)) {
-                // Handle win
-            } else if (turns === 9) {
-                // Handle tie
-            }
-            }
-        });
+    turns = 0;
+    p_turn = true;
+    $result.text('');
+    $cells.forEach(cell => cell.text('')); // Clear the text of each cell
+    $('#player-turn').text("Player X's Turn"); // Reset the player's turn text
+    // Event handlers
+    $gameboard.on("click", ".cell", function () {
+        const cell = $(this);
+        if (cell.text() === '') {
+        if (p_turn) {
+            cell.text(player1);
+            p_turn = false;
+            $('#player-turn').text("Player O's Turn");
+        } else {
+            cell.text(player2);
+            p_turn = true;
+            $('#player-turn').text("Player X's Turn");
+        }
+        turns++;
+        if (checkWin(player1) || checkWin(player2)) {
+            // Handle win
+        } else if (turns === 9) {
+            // Handle tie
+        }
+        }
+    });
     }
 
   </script>
 </body>
 </html>
+
 
